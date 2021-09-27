@@ -8,35 +8,39 @@ using System.Threading.Tasks;
 
 namespace InAndOut.Controllers
 {
-    public class ItemController : Controller
+    public class ExpensesController : Controller
     {
-        private readonly ApplicationDbContext _db;
+        ApplicationDbContext _db;
 
-        public ItemController(ApplicationDbContext db)
+        public ExpensesController(ApplicationDbContext db)
         {
             _db = db;
         }
-
         public IActionResult Index()
         {
-             IEnumerable<Item> objList = _db.Items;
-            return View(objList);
+            return View(_db.Expenses);
         }
 
-        //GET-Create
         public IActionResult Create()
         {
             return View();
         }
 
-        //POST-Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Item obj)
+        public IActionResult Create(Expenses obj)
         {
-            _db.Items.Add(obj);
-            _db.SaveChanges();
-            return RedirectToAction("Index");
+            if(ModelState.IsValid)
+            {
+                _db.Expenses.Add(obj);
+                _db.SaveChanges();
+
+                return RedirectToAction("Index");
+            }
+
+            return View(obj);
+          
         }
+
     }
 }
